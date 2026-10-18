@@ -22,6 +22,7 @@ import { useAuth } from '@/lib/auth';
 import { createEvent } from '@/lib/events';
 import { getCurrentRole } from '@/lib/role';
 import { buildQRPayload } from '@/lib/qr';
+import type { Role } from '@/lib/profiles';
 
 function toLocalISO(date: Date) {
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -57,9 +58,7 @@ type EditTarget = 'start' | 'end';
 export default function TeacherScreen() {
   const { user } = useAuth();
 
-  const [role, setRole] = useState<
-    'student' | 'teacher' | null
-  >(null);
+  const [role, setRole] = useState<Role | null>(null);
 
   const [roleLoading, setRoleLoading] = useState(true);
 
@@ -247,7 +246,7 @@ export default function TeacherScreen() {
     );
   }
 
-  if (role !== 'teacher') {
+  if (role !== 'teacher' && role !== 'admin') {
     return (
       <View style={styles.centerContainer}>
         <Ionicons
@@ -257,11 +256,11 @@ export default function TeacherScreen() {
         />
 
         <Text style={styles.centerTitle}>
-          Teachers Only
+          Teachers and Admins Only
         </Text>
 
         <Text style={styles.centerMessage}>
-          Only teacher accounts can create events.
+          Only teacher and administrator accounts can create events.
         </Text>
       </View>
     );
@@ -274,12 +273,13 @@ export default function TeacherScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <Text style={styles.title}>
-        Create Event QR
+        {role === 'admin'
+          ? 'Manage Event'
+          : 'Create Event QR'}
       </Text>
 
       <Text style={styles.subtitle}>
-        Fill in the event details, then scan the
-        generated QR with the Scan tab.
+        Fill in the event details, then generate the QR code.
       </Text>
 
       <Text style={styles.label}>
@@ -386,7 +386,7 @@ export default function TeacherScreen() {
       {payload && (
         <View style={styles.resultCard}>
           <Text style={styles.resultTitle}>
-            Scan this QR code with the Scan tab:
+            Generated Event QR
           </Text>
 
           <View style={styles.qrBox}>

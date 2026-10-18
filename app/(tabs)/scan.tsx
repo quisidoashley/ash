@@ -7,6 +7,7 @@ import { COLORS } from '@/constants/colors';
 import { useAuth } from '@/lib/auth';
 import { registerAttendance } from '@/lib/attendance';
 import { getCurrentRole } from '@/lib/role';
+import type { Role } from '@/lib/profiles';
 
 export default function ScanScreen() {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ export default function ScanScreen() {
   const [lastData, setLastData] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [role, setRole] = useState<'student' | 'teacher' | null>(null);
+  const [role, setRole] = useState<Role | null>(null);
 
   useEffect(() => {
     async function loadRole() {
@@ -27,10 +28,11 @@ export default function ScanScreen() {
     loadRole();
   }, []);
 
-  if (role === 'teacher') {
+  if (role === 'teacher' || role === 'admin') {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Student Only</Text>
+
         <Text style={styles.subtitle}>
           QR attendance scanning is only available for students.
         </Text>
@@ -46,6 +48,7 @@ export default function ScanScreen() {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Camera Permission Needed</Text>
+
         <Text style={styles.subtitle}>
           We need access to your camera to scan QR codes.
         </Text>
@@ -87,7 +90,9 @@ export default function ScanScreen() {
         barcodeScannerSettings={{
           barcodeTypes: ['qr'],
         }}
-        onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
+        onBarcodeScanned={
+          scanned ? undefined : handleBarcodeScanned
+        }
       />
 
       <View style={styles.overlay}>

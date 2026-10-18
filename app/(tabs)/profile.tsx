@@ -12,11 +12,8 @@ import {
 import { useFocusEffect, useRouter } from 'expo-router';
 
 import AppButton from '@/components/AppButton';
-
 import { COLORS } from '@/constants/colors';
-
 import { useAuth, signOut } from '@/lib/auth';
-
 import { getProfile, updateProfile } from '@/lib/profiles';
 
 export default function ProfileScreen() {
@@ -124,24 +121,14 @@ export default function ProfileScreen() {
 
           <Text style={styles.label}>Role</Text>
 
-          {profile?.role === 'teacher' ? (
-            <View style={styles.roleBadge}>
-              <Text style={styles.roleBadgeText}>
-                Teacher
-              </Text>
-            </View>
-          ) : (
-            <View
-              style={[
-                styles.roleBadge,
-                styles.roleBadgeStudent,
-              ]}
-            >
-              <Text style={styles.roleBadgeText}>
-                Student
-              </Text>
-            </View>
-          )}
+          <View style={styles.roleBadge}>
+            <Text style={styles.roleBadgeText}>
+              {profile?.role
+                ? profile.role.charAt(0).toUpperCase() +
+                  profile.role.slice(1)
+                : 'Loading...'}
+            </Text>
+          </View>
 
           <Text style={styles.label}>Email</Text>
 
@@ -158,10 +145,10 @@ export default function ProfileScreen() {
       )}
 
       <AppButton
-       title="Sign Out"
-       icon="log-out-outline"
+        title="Sign Out"
+        icon="log-out-outline"
         onPress={handleSignOut}
-/>
+      />
     </View>
   );
 }
@@ -227,10 +214,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 7,
-  },
-
-  roleBadgeStudent: {
-    backgroundColor: COLORS.primary,
   },
 
   roleBadgeText: {
